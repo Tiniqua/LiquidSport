@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A brief description of your website">
+    <meta name="author" content="Your Name">
+    <title>Liquid Mindset</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <header>
+        <h1>Liquid Mindset</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="home">
+            <h2>Home</h2>
+            <p>Welcome to our website!</p>
+        </section>
+        
+        <section id="about">
+            <h2>About</h2>
+            <p>Information about your website or company.</p>
+        </section>
+        
+        <section id="services">
+            <h2>Services</h2>
+            <p>Details about the services you offer.</p>
+        </section>
+        
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>How to get in touch with you.</p>
+            <section id="get-in-touch">
+                <h3>Get in Touch</h3>
+                <form action="https://api.web3forms.com/submit" method="POST">
+                    <input type="hidden" name="access_key" value="5dcc16de-717a-429e-b2e4-e8c79d58d4ff">
+
+                    <label for="name">Name:</label><br>
+                    <input type="text" id="name" name="name" required><br><br>
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="email" name="email" required><br><br>
+                    <label for="message">Message:</label><br>
+                    <textarea id="message" name="message" rows="4" required></textarea><br><br>
+                    <button type="submit">Send</button>
+                </form>
+            </section>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 Your Name. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts.js"></script> <!-- Link to your JavaScript file -->
+</body>
+</html>
