@@ -1,10 +1,12 @@
 :root {
-  --bg: #f7f8fb;
+  --bg: #f3f6fb;
   --surface: #ffffff;
-  --text: #101320;
-  --muted: #586074;
-  --accent: #1e63ff;
-  --radius: 12px;
+  --text: #141b2d;
+  --muted: #4d5b77;
+  --accent: #1c5de0;
+  --accent-dark: #1548b0;
+  --line: #dce3f1;
+  --radius: 14px;
   --container: min(1080px, 92vw);
 }
 
@@ -12,12 +14,16 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: var(--text);
   background: var(--bg);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .container {
@@ -25,14 +31,35 @@ body {
   margin: 0 auto;
 }
 
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  background: #111;
+  color: #fff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
 .site-header,
 .site-footer {
   background: var(--surface);
-  border-bottom: 1px solid #e8ebf2;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .site-footer {
-  border-top: 1px solid #e8ebf2;
+  border-top: 1px solid var(--line);
   border-bottom: 0;
 }
 
@@ -56,26 +83,77 @@ body {
   padding: 0;
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .nav-list a {
   text-decoration: none;
   color: var(--muted);
+  font-weight: 500;
+}
+
+.nav-list a:hover,
+.nav-list a:focus-visible {
+  color: var(--accent);
 }
 
 .section {
-  padding: 4rem 0;
+  padding: 4.2rem 0;
 }
 
 .hero {
-  padding-top: 5rem;
+  padding-top: 5.6rem;
+}
+
+.hero-layout,
+.contact-layout {
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: start;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.lead {
+  font-size: 1.08rem;
+  max-width: 64ch;
+}
+
+.hero-note,
+.card,
+#contact-form,
+.challenge-grid li {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.hero-note,
+.card {
+  padding: 1.1rem;
+}
+
+.narrow {
+  max-width: 760px;
 }
 
 h1,
 h2,
 h3 {
   line-height: 1.2;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.8rem;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 4vw, 3rem);
 }
 
 p {
@@ -85,48 +163,118 @@ p {
 
 button,
 input,
-textarea {
+textarea,
+.btn {
   font: inherit;
 }
 
+.btn,
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 999px;
-  padding: 0.65rem 1rem;
+  padding: 0.7rem 1.15rem;
   background: var(--accent);
   color: #fff;
   cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn:hover,
+.btn:focus-visible,
+button:hover,
+button:focus-visible {
+  background: var(--accent-dark);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid #b8c8ef;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus-visible {
+  background: #ebf0fd;
+}
+
+.cta-row {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 
-.card,
-#contact-form {
-  background: var(--surface);
-  border: 1px solid #e8ebf2;
-  border-radius: var(--radius);
-  padding: 1rem;
+.challenge-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.8rem;
+}
+
+.challenge-grid li {
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  color: #1d2941;
 }
 
 #contact-form {
   display: grid;
-  gap: 0.9rem;
-  max-width: 620px;
+  gap: 0.8rem;
+  padding: 1.2rem;
 }
 
 label {
-  display: grid;
-  gap: 0.3rem;
   font-weight: 600;
 }
 
 input,
 textarea {
-  border: 1px solid #d6dceb;
-  border-radius: 8px;
-  padding: 0.6rem 0.7rem;
+  width: 100%;
+  border: 1px solid #c8d4ed;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  margin-top: 0.3rem;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #c9dafb;
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.form-feedback {
+  min-height: 1.2rem;
+  margin: 0;
+  font-weight: 600;
+  color: #1f6f3f;
+}
+
+@media (max-width: 800px) {
+  .site-header .container,
+  .site-footer .container {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .hero-layout,
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding-top: 4.4rem;
+  }
 }
