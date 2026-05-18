@@ -6,24 +6,24 @@
 
   if (themeToggle) {
     const setTheme = (theme) => {
-      const isLight = theme === 'light';
+      const isDark = theme === 'dark';
 
-      document.body.classList.toggle('light-theme', isLight);
-      themeToggle.setAttribute('aria-pressed', String(!isLight));
+      document.body.classList.toggle('dark-theme', isDark);
+      themeToggle.setAttribute('aria-pressed', String(isDark));
       themeToggle.setAttribute(
           'aria-label',
-          isLight ? 'Switch to dark mode' : 'Switch to light mode'
+          isDark ? 'Switch to light mode' : 'Switch to dark mode'
       );
 
       localStorage.setItem('site-theme', theme);
     };
 
-    const savedTheme = localStorage.getItem('site-theme') || 'dark';
+    const savedTheme = localStorage.getItem('site-theme') || 'light';
     setTheme(savedTheme);
 
     themeToggle.addEventListener('click', () => {
-      const isLight = document.body.classList.contains('light-theme');
-      setTheme(isLight ? 'dark' : 'light');
+      const isDark = document.body.classList.contains('dark-theme');
+      setTheme(isDark ? 'light' : 'dark');
     });
   }
 
