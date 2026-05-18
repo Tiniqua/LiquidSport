@@ -239,6 +239,31 @@
   }
 
   /**
+   * TEDx announcement bar
+   */
+  const announcement = document.getElementById('tedx-announcement');
+  const announcementClose = document.getElementById('announcement-close');
+
+  const updateHeaderHeight = () => {
+    if (!header) return;
+
+    const headerHeight = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+  };
+
+  updateHeaderHeight();
+  window.addEventListener('scroll', updateHeaderHeight, { passive: true });
+  window.addEventListener('resize', updateHeaderHeight);
+
+  if (announcement && announcementClose) {
+    announcement.classList.remove('is-hidden');
+
+    announcementClose.addEventListener('click', () => {
+      announcement.classList.add('is-hidden');
+    });
+  }
+
+  /**
    * Service carousel logic
    */
   function initServiceCarousel(carousel) {

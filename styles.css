@@ -65,6 +65,193 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Announcement bar */
+
+.announcement-bar {
+  position: sticky;
+  top: var(--header-height, 4.2rem);
+  z-index: 19;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background:
+          linear-gradient(90deg, rgba(0, 174, 239, 0.18), rgba(89, 54, 255, 0.18)),
+          var(--surface-glass);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.announcement-link {
+  flex: 1;
+  padding: 0.68rem 1rem;
+  text-align: center;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.announcement-link strong {
+  color: var(--accent);
+  font-weight: 950;
+}
+
+.announcement-link:hover,
+.announcement-link:focus-visible {
+  color: var(--accent);
+}
+
+.announcement-close {
+  width: 2.6rem;
+  min-height: 100%;
+  padding: 0;
+  border-radius: 0;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  font-size: 1.35rem;
+}
+
+.announcement-close:hover,
+.announcement-close:focus-visible {
+  background: var(--surface-soft);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.announcement-bar.is-hidden {
+  display: none;
+}
+
+/* TEDx section */
+
+.tedx-section {
+  position: relative;
+}
+
+.tedx-layout {
+  display: grid;
+  grid-template-columns: 1.02fr 0.98fr;
+  gap: clamp(1.6rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.tedx-copy {
+  max-width: 680px;
+}
+
+.tedx-copy h2 {
+  max-width: 13ch;
+}
+
+.tedx-video-card {
+  padding: 0;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: 0 22px 64px var(--shadow);
+  transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+}
+
+.tedx-video-card:hover,
+.tedx-video-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(0, 174, 239, 0.45);
+  box-shadow: 0 26px 72px var(--shadow);
+}
+
+.tedx-thumbnail {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background:
+          radial-gradient(circle at 20% 20%, rgba(0, 174, 239, 0.18), transparent 10rem),
+          linear-gradient(135deg, rgba(17, 157, 255, 0.14), rgba(89, 54, 255, 0.16)),
+          var(--surface-soft);
+  border-bottom: 1px solid var(--line);
+}
+
+.tedx-thumbnail img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition:
+          transform 240ms ease,
+          filter 240ms ease;
+}
+
+.tedx-video-card:hover .tedx-thumbnail img,
+.tedx-video-card:focus-visible .tedx-thumbnail img {
+  transform: scale(1.04);
+  filter: brightness(0.86);
+}
+
+.tedx-thumbnail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+          linear-gradient(180deg, transparent 42%, rgba(0, 0, 0, 0.48)),
+          radial-gradient(circle at center, rgba(0, 174, 239, 0.12), transparent 14rem);
+  pointer-events: none;
+}
+
+.tedx-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 999px;
+  background: var(--accent-blue);
+  color: #ffffff;
+  font-size: 1.45rem;
+  transform: translate(-50%, -50%);
+  box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.24),
+          0 18px 42px rgba(0, 174, 239, 0.32);
+  transition:
+          background 180ms ease,
+          transform 180ms ease;
+}
+
+.tedx-video-card:hover .tedx-play,
+.tedx-video-card:focus-visible .tedx-play {
+  background: var(--accent);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.tedx-card-content {
+  padding: clamp(1.1rem, 2.4vw, 1.45rem);
+}
+
+.tedx-card-content h3 {
+  margin-bottom: 0.45rem;
+}
+
+.tedx-card-content p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .tedx-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tedx-copy h2 {
+    max-width: 16ch;
+  }
+}
+
 body {
   margin: 0;
   font-family: "Aptos", "Segoe UI", system-ui, -apple-system, sans-serif;
