@@ -1004,12 +1004,12 @@ select:focus-visible {
 
   .reveal {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(5px);
     filter: blur(1px);
     transition:
-            opacity 100ms ease,
-            transform 100ms ease,
-            filter 100ms ease;
+            opacity 30ms ease,
+            transform 30ms ease,
+            filter 30ms ease;
     will-change: opacity, transform, filter;
   }
 }
