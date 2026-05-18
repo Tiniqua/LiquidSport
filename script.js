@@ -79,6 +79,34 @@
   }
 
   /**
+   * Scaling sticky footer
+   * Footer is smaller while browsing and returns to full size near the bottom.
+   */
+  const footer = document.querySelector('.site-footer');
+
+  const updateFooterScale = () => {
+    if (!footer) return;
+
+    const scrollableDistance = document.documentElement.scrollHeight - window.innerHeight;
+    const distanceFromBottom = Math.max(scrollableDistance - window.scrollY, 0);
+
+    const maxDistance = 220;
+    const bottomProgress = 1 - Math.min(distanceFromBottom / maxDistance, 1);
+
+    const smallScale = 0.72;
+    const fullScale = 1;
+
+    const scale = smallScale + bottomProgress * (fullScale - smallScale);
+
+    document.documentElement.style.setProperty('--footer-scale', scale.toFixed(3));
+    footer.classList.toggle('is-at-bottom', bottomProgress > 0.85);
+  };
+
+  updateFooterScale();
+  window.addEventListener('scroll', updateFooterScale, { passive: true });
+  window.addEventListener('resize', updateFooterScale);
+
+  /**
    * Smooth internal anchor scrolling
    */
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -138,7 +166,8 @@
         '.service-card',
         '#contact-form',
         '.challenge-grid li',
-        '.mini-card'
+        '.mini-card',
+        '.social-link'
       ].join(', ')
   );
 
@@ -176,12 +205,13 @@
         '.about-highlights > *',
         '.publication-card',
         '.policy-card',
+        '.social-section',
+        '.social-link',
         '.cta-row',
         '.card',
         '.hero-note'
       ].join(', ')
   );
-
   if (!prefersReducedMotion && 'IntersectionObserver' in window) {
     revealElements.forEach((element) => {
       element.classList.add('reveal');
