@@ -261,24 +261,6 @@ textarea:focus-visible {
   color: #1f6f3f;
 }
 
-@media (max-width: 800px) {
-  .site-header .container,
-  .site-footer .container {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.7rem;
-  }
-
-  .hero-layout,
-  .contact-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .hero {
-    padding-top: 4.4rem;
-  }
-}
-
 .service-track {
   margin-top: 2rem;
 }
@@ -305,7 +287,6 @@ textarea:focus-visible {
   gap: 1rem;
   transition: transform 320ms ease;
   will-change: transform;
-  touch-action: pan-y;
   user-select: none;
 }
 
@@ -317,7 +298,11 @@ textarea:focus-visible {
   padding: 1rem;
   min-height: 224px;
   transform-origin: center;
-  transition: transform 220ms ease, opacity 220ms ease, filter 220ms ease, box-shadow 220ms ease;
+  transition:
+          transform 220ms ease,
+          opacity 220ms ease,
+          filter 220ms ease,
+          box-shadow 220ms ease;
 }
 
 .service-card p,
@@ -330,11 +315,24 @@ textarea:focus-visible {
   line-height: 1.3;
 }
 
+.service-card.is-hidden-card {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.91);
+}
+
 .service-card.is-preview {
   opacity: 0.5;
   filter: grayscale(0.2);
   transform: scale(0.91);
-  pointer-events: none;
+  cursor: pointer;
+}
+
+.service-card.is-preview:hover,
+.service-card.is-preview:focus-visible {
+  opacity: 0.72;
+  transform: scale(0.94);
 }
 
 .service-card.is-active {
@@ -364,6 +362,24 @@ textarea:focus-visible {
   .service-card {
     flex-basis: calc((100% - 3rem) / 4);
     min-height: 238px;
+  }
+}
+
+@media (max-width: 800px) {
+  .site-header .container,
+  .site-footer .container {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .hero-layout,
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding-top: 4.4rem;
   }
 }
 

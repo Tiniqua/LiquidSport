@@ -7,7 +7,7 @@
   if (cta && contactSection) {
     cta.addEventListener('click', (event) => {
       event.preventDefault();
-      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      contactSection.scrollIntoView({behavior: 'smooth', block: 'start'});
     });
   }
 
@@ -26,8 +26,9 @@
    * Service carousel logic
    * - Keeps one left and one right preview card visible.
    * - The center cards are the active cards (3 desktop, 2 tablet, 1 mobile).
-   * - Uses modular arithmetic so the carousel loops infinitely.
+   * - Does not loop. Arrows hide at the start/end.
    */
+
   function initServiceCarousel(carousel) {
     const viewport = carousel.querySelector('[data-viewport]');
     const track = carousel.querySelector('[data-track]');
@@ -35,101 +36,130 @@
     const prevBtn = carousel.querySelector('[data-dir="prev"]');
     const nextBtn = carousel.querySelector('[data-dir="next"]');
 
-    let index = 0;
+    let index = 1; // first full-size active card
     let activeCount = 3;
-    let isDragging = false;
-    let startX = 0;
-    let deltaX = 0;
-
-    const getCardStep = () => {
-      if (!cards.length) return 0;
-      const cardWidth = cards[0].getBoundingClientRect().width;
-      const styles = window.getComputedStyle(track);
-      const gap = parseFloat(styles.columnGap || styles.gap || '0');
-      return cardWidth + gap;
-    };
 
     const setActiveCount = () => {
       const width = window.innerWidth;
+
       if (width <= 540) activeCount = 1;
       else if (width <= 980) activeCount = 2;
       else activeCount = 3;
     };
 
-    const normalize = (value) => (value + cards.length) % cards.length;
+    const getMaxIndex = () => {
+      return Math.max(0, cards.length - activeCount);
+    };
+
+    const clampIndex = () => {
+      index = Math.min(Math.max(index, 0), getMaxIndex());
+    };
+
+    const getCardStep = () => {
+      if (!cards.length) return 0;
+
+      const cardWidth = cards[0].getBoundingClientRect().width;
+      const styles = window.getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap || '0');
+
+      return cardWidth + gap;
+    };
+
+    const updateButtons = () => {
+      if (prevBtn) {
+        prevBtn.hidden = index === 0;
+        prevBtn.disabled = index === 0;
+      }
+
+      if (nextBtn) {
+        nextBtn.hidden = index >= getMaxIndex();
+        nextBtn.disabled = index >= getMaxIndex();
+      }
+    };
 
     const updateState = () => {
       setActiveCount();
+      clampIndex();
+
       const step = getCardStep();
-      const offset = -(normalize(index) * step);
+
+      // Start the viewport one card before the active group when possible,
+      // so the previous card appears as the faded preview.
+      const visibleStartIndex = Math.max(0, index - 1);
+      const offset = -(visibleStartIndex * step);
+
       track.style.transform = `translateX(${offset}px)`;
 
       cards.forEach((card, i) => {
-        const relative = normalize(i - normalize(index));
-        const isPreview = relative === 0 || relative === activeCount + 1;
-        const isActive = relative >= 1 && relative <= activeCount;
+        const isLeftPreview = i === index - 1;
+        const isRightPreview = i === index + activeCount;
+        const isActive = i >= index && i < index + activeCount;
+        const isPreview = isLeftPreview || isRightPreview;
+        const isHidden = !isActive && !isPreview;
 
         card.classList.toggle('is-preview', isPreview);
         card.classList.toggle('is-active', isActive);
-        card.setAttribute('aria-hidden', isPreview ? 'true' : 'false');
+        card.classList.toggle('is-hidden-card', isHidden);
 
-        if (isPreview) {
+        card.dataset.carouselRole = '';
+
+        if (isLeftPreview) {
+          card.dataset.carouselRole = 'prev';
+        } else if (isRightPreview) {
+          card.dataset.carouselRole = 'next';
+        }
+
+        card.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
+
+        if (isHidden) {
           card.setAttribute('inert', '');
           card.tabIndex = -1;
         } else {
           card.removeAttribute('inert');
-          card.removeAttribute('tabindex');
+          card.tabIndex = isPreview ? 0 : -1;
         }
       });
+
+      updateButtons();
     };
 
     const moveBy = (direction) => {
-      index = normalize(index + direction);
+      index += direction;
+      clampIndex();
       updateState();
-    };
-
-    const onDragStart = (clientX) => {
-      isDragging = true;
-      startX = clientX;
-      deltaX = 0;
-      track.style.transition = 'none';
-    };
-
-    const onDragMove = (clientX) => {
-      if (!isDragging) return;
-      deltaX = clientX - startX;
-      const offset = -(normalize(index) * getCardStep()) + deltaX;
-      track.style.transform = `translateX(${offset}px)`;
-    };
-
-    const onDragEnd = () => {
-      if (!isDragging) return;
-      isDragging = false;
-      track.style.transition = '';
-      const threshold = Math.max(48, getCardStep() * 0.16);
-
-      if (deltaX > threshold) moveBy(-1);
-      else if (deltaX < -threshold) moveBy(1);
-      else updateState();
     };
 
     nextBtn?.addEventListener('click', () => moveBy(1));
     prevBtn?.addEventListener('click', () => moveBy(-1));
 
-    viewport.addEventListener('pointerdown', (event) => {
-      if (event.pointerType === 'mouse' && event.button !== 0) return;
-      onDragStart(event.clientX);
-      viewport.setPointerCapture(event.pointerId);
-    });
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        if (card.dataset.carouselRole === 'prev') {
+          moveBy(-1);
+        }
 
-    viewport.addEventListener('pointermove', (event) => onDragMove(event.clientX));
-    viewport.addEventListener('pointerup', onDragEnd);
-    viewport.addEventListener('pointercancel', onDragEnd);
-    viewport.addEventListener('pointerleave', () => {
-      if (isDragging) onDragEnd();
+        if (card.dataset.carouselRole === 'next') {
+          moveBy(1);
+        }
+      });
+
+      card.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+
+        if (card.dataset.carouselRole === 'prev') {
+          event.preventDefault();
+          moveBy(-1);
+        }
+
+        if (card.dataset.carouselRole === 'next') {
+          event.preventDefault();
+          moveBy(1);
+        }
+      });
     });
 
     window.addEventListener('resize', updateState);
+
     updateState();
   }
 
