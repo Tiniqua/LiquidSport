@@ -2,6 +2,52 @@
   const year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  const themeToggle = document.getElementById('theme-toggle');
+
+  if (themeToggle) {
+    const setTheme = (theme) => {
+      const isLight = theme === 'light';
+
+      document.body.classList.toggle('light-theme', isLight);
+      themeToggle.setAttribute('aria-pressed', String(!isLight));
+      themeToggle.setAttribute(
+          'aria-label',
+          isLight ? 'Switch to dark mode' : 'Switch to light mode'
+      );
+
+      localStorage.setItem('site-theme', theme);
+    };
+
+    const savedTheme = localStorage.getItem('site-theme') || 'dark';
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.contains('light-theme');
+      setTheme(isLight ? 'dark' : 'light');
+    });
+  }
+
+  const header = document.querySelector('.site-header');
+
+  const updateHeaderScale = () => {
+    if (!header) return;
+
+    const maxScroll = 180;
+    const scrollProgress = Math.min(window.scrollY / maxScroll, 1);
+
+    const topScale = 1;
+    const scrolledScale = 0.7;
+
+    const scale = topScale - scrollProgress * (topScale - scrolledScale);
+
+    document.documentElement.style.setProperty('--header-scale', scale.toFixed(3));
+
+    header.classList.toggle('is-scrolled', scrollProgress > 0.85);
+  };
+
+  updateHeaderScale();
+  window.addEventListener('scroll', updateHeaderScale, { passive: true });
+
   const contactSection = document.getElementById('contact');
   const cta = document.getElementById('primary-cta');
   if (cta && contactSection) {

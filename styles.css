@@ -1,4 +1,21 @@
 :root {
+  --bg: #07111f;
+  --surface: #101d31;
+  --text: #f4f7fb;
+  --muted: #c3cce0;
+  --accent: #62b7ff;
+  --accent-dark: #339bea;
+  --line: #24344f;
+  --radius: 14px;
+  --container: min(1080px, 92vw);
+
+  --header-scale: 1;
+  --header-base-padding: 0.8rem;
+  --header-base-brand-size: 1rem;
+  --header-base-nav-size: 0.95rem;
+}
+
+body.light-theme {
   --bg: #f3f6fb;
   --surface: #ffffff;
   --text: #141b2d;
@@ -6,8 +23,6 @@
   --accent: #1c5de0;
   --accent-dark: #1548b0;
   --line: #dce3f1;
-  --radius: 14px;
-  --container: min(1080px, 92vw);
 }
 
 * {
@@ -63,18 +78,20 @@ body {
   border-bottom: 0;
 }
 
-.site-header .container,
-.site-footer .container {
+.site-header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  padding: calc(var(--header-base-padding) * var(--header-scale)) 0;
+  transition: padding 80ms linear;
 }
 
 .brand {
   text-decoration: none;
   color: inherit;
   font-weight: 700;
+  font-size: calc(var(--header-base-brand-size) * var(--header-scale));
+  transition: font-size 80ms linear;
 }
 
 .nav-list {
@@ -91,6 +108,8 @@ body {
   text-decoration: none;
   color: var(--muted);
   font-weight: 500;
+  font-size: calc(var(--header-base-nav-size) * var(--header-scale));
+  transition: font-size 80ms linear, color 160ms ease;
 }
 
 .nav-list a:hover,
@@ -193,12 +212,67 @@ button:focus-visible {
 .btn-secondary {
   background: transparent;
   color: var(--accent);
-  border: 1px solid #b8c8ef;
+  border: 1px solid var(--line);
 }
 
 .btn-secondary:hover,
 .btn-secondary:focus-visible {
-  background: #ebf0fd;
+  background: var(--surface);
+}
+
+.site-header .container {
+  gap: 1rem;
+}
+
+.theme-toggle {
+  position: relative;
+  width: 3.25rem;
+  height: 1.75rem;
+  flex: 0 0 auto;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #101d31;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+          background 180ms ease,
+          border-color 180ms ease;
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: #141414;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+  transform: translateY(-50%);
+  transition:
+          left 180ms ease,
+          background 180ms ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  background: #172944;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid rgba(98, 183, 255, 0.35);
+  outline-offset: 3px;
+}
+
+body.light-theme .theme-toggle {
+  background: #62b7ff;
+  border-color: #62b7ff;
+}
+
+body.light-theme .theme-toggle-thumb {
+  left: calc(100% - 1.25rem - 0.25rem);
+  background: #141414;
 }
 
 .cta-row {
@@ -225,7 +299,7 @@ button:focus-visible {
 .challenge-grid li {
   padding: 0.85rem 1rem;
   font-weight: 600;
-  color: #1d2941;
+  color: var(--text);
 }
 
 #contact-form {
