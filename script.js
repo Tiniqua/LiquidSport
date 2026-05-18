@@ -2,6 +2,11 @@
   const year = document.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /**
+   * Theme toggle
+   */
   const themeToggle = document.getElementById('theme-toggle');
 
   if (themeToggle) {
@@ -27,6 +32,9 @@
     });
   }
 
+  /**
+   * Shrinking sticky header
+   */
   const header = document.querySelector('.site-header');
 
   const updateHeaderScale = () => {
@@ -41,22 +49,32 @@
     const scale = topScale - scrollProgress * (topScale - scrolledScale);
 
     document.documentElement.style.setProperty('--header-scale', scale.toFixed(3));
-
     header.classList.toggle('is-scrolled', scrollProgress > 0.85);
   };
 
   updateHeaderScale();
   window.addEventListener('scroll', updateHeaderScale, { passive: true });
 
+  /**
+   * Primary CTA smooth scroll
+   */
   const contactSection = document.getElementById('contact');
   const cta = document.getElementById('primary-cta');
+
   if (cta && contactSection) {
     cta.addEventListener('click', (event) => {
       event.preventDefault();
-      contactSection.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+      contactSection.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'start'
+      });
     });
   }
 
+  /**
+   * Simple contact form feedback
+   */
   const form = document.getElementById('contact-form');
   const feedback = document.getElementById('form-feedback');
 
@@ -69,20 +87,95 @@
   }
 
   /**
+   * Subtle liquid cursor glow
+   * Uses CSS variables --mx and --my to position the radial highlight.
+   */
+  const liquidGlowElements = document.querySelectorAll(
+      '.card, .hero-note, .service-card, #contact-form, .challenge-grid li'
+  );
+
+  liquidGlowElements.forEach((element) => {
+    element.addEventListener('pointermove', (event) => {
+      const rect = element.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+      element.style.setProperty('--mx', `${x}%`);
+      element.style.setProperty('--my', `${y}%`);
+    });
+
+    element.addEventListener('pointerleave', () => {
+      element.style.setProperty('--mx', '50%');
+      element.style.setProperty('--my', '50%');
+    });
+  });
+
+  /**
+   * Soft scroll reveal
+   */
+  /**
+   * Soft scroll reveal
+   * Fades blocks in as they enter the viewport and fades them out as they leave.
+   */
+  const revealElements = document.querySelectorAll(
+      [
+        '.section h2',
+        '.section h3',
+        '.section .lead',
+        '.section > .container > p',
+        '.service-track',
+        '.challenge-grid li',
+        '.contact-layout > *',
+        '.hero-layout > *',
+        '.cta-row',
+        '.card',
+        '.hero-note'
+      ].join(', ')
+  );
+
+  if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+    revealElements.forEach((element) => {
+      element.classList.add('reveal');
+    });
+
+    const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            entry.target.classList.toggle('is-visible', entry.isIntersecting);
+          });
+        },
+        {
+          threshold: 0.14,
+          rootMargin: '0px 0px -8% 0px'
+        }
+    );
+
+    revealElements.forEach((element) => {
+      revealObserver.observe(element);
+    });
+  } else {
+    revealElements.forEach((element) => {
+      element.classList.add('reveal', 'is-visible');
+    });
+  }
+
+  /**
    * Service carousel logic
    * - Keeps one left and one right preview card visible.
-   * - The center cards are the active cards (3 desktop, 2 tablet, 1 mobile).
-   * - Does not loop. Arrows hide at the start/end.
+   * - The center cards are the active cards: 3 desktop, 2 tablet, 1 mobile.
+   * - Does not loop.
+   * - Arrows hide at the start/end.
    */
-
   function initServiceCarousel(carousel) {
     const viewport = carousel.querySelector('[data-viewport]');
     const track = carousel.querySelector('[data-track]');
-    const cards = Array.from(track.children);
+    const cards = track ? Array.from(track.children) : [];
     const prevBtn = carousel.querySelector('[data-dir="prev"]');
     const nextBtn = carousel.querySelector('[data-dir="next"]');
 
-    let index = 1; // first full-size active card
+    if (!viewport || !track || !cards.length) return;
+
+    let index = 1;
     let activeCount = 3;
 
     const setActiveCount = () => {
@@ -129,8 +222,10 @@
 
       const step = getCardStep();
 
-      // Start the viewport one card before the active group when possible,
-      // so the previous card appears as the faded preview.
+      /*
+       * Start the viewport one card before the active group when possible,
+       * so the previous card appears as the faded preview.
+       */
       const visibleStartIndex = Math.max(0, index - 1);
       const offset = -(visibleStartIndex * step);
 
@@ -204,7 +299,18 @@
       });
     });
 
-    window.addEventListener('resize', updateState);
+    let resizeFrame = null;
+
+    const requestCarouselUpdate = () => {
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+
+      resizeFrame = requestAnimationFrame(() => {
+        updateState();
+        resizeFrame = null;
+      });
+    };
+
+    window.addEventListener('resize', requestCarouselUpdate);
 
     updateState();
   }
