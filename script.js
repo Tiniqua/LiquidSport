@@ -18,16 +18,23 @@
       document.body.classList.add('dark-theme');
     }
 
-    themeToggle.setAttribute(
-        'aria-pressed',
-        String(document.body.classList.contains('dark-theme'))
-    );
+    const updateThemeButton = () => {
+      const isDark = document.body.classList.contains('dark-theme');
+
+      themeToggle.setAttribute('aria-pressed', String(isDark));
+      themeToggle.setAttribute(
+          'aria-label',
+          isDark ? 'Switch to light mode' : 'Switch to dark mode'
+      );
+    };
+
+    updateThemeButton();
 
     themeToggle.addEventListener('click', () => {
       const isDark = document.body.classList.toggle('dark-theme');
 
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      themeToggle.setAttribute('aria-pressed', String(isDark));
+      updateThemeButton();
     });
   }
 
@@ -72,6 +79,28 @@
   }
 
   /**
+   * Smooth internal anchor scrolling
+   */
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const targetId = link.getAttribute('href');
+
+      if (!targetId || targetId === '#') return;
+
+      const target = document.querySelector(targetId);
+
+      if (!target) return;
+
+      event.preventDefault();
+
+      target.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'start'
+      });
+    });
+  });
+
+  /**
    * Simple contact form feedback
    */
   const form = document.getElementById('contact-form');
@@ -80,6 +109,20 @@
   if (form && feedback) {
     form.addEventListener('submit', (event) => {
       event.preventDefault();
+
+      const name = form.querySelector('#name');
+      const email = form.querySelector('#email');
+      const message = form.querySelector('#message');
+
+      const hasName = name && name.value.trim().length > 0;
+      const hasEmail = email && email.value.trim().length > 0;
+      const hasMessage = message && message.value.trim().length > 0;
+
+      if (!hasName || !hasEmail || !hasMessage) {
+        feedback.textContent = 'Please complete all fields before sending.';
+        return;
+      }
+
       feedback.textContent = "Thank you, we'll be in touch soon.";
       form.reset();
     });
@@ -87,10 +130,16 @@
 
   /**
    * Subtle liquid cursor glow
-   * Uses CSS variables --mx and --my to position the radial highlight.
    */
   const liquidGlowElements = document.querySelectorAll(
-      '.card, .hero-note, .service-card, #contact-form, .challenge-grid li'
+      [
+        '.card',
+        '.hero-note',
+        '.service-card',
+        '#contact-form',
+        '.challenge-grid li',
+        '.mini-card'
+      ].join(', ')
   );
 
   liquidGlowElements.forEach((element) => {
@@ -112,20 +161,21 @@
   /**
    * Soft scroll reveal
    */
-  /**
-   * Soft scroll reveal
-   * Fades blocks in as they enter the viewport and fades them out as they leave.
-   */
   const revealElements = document.querySelectorAll(
       [
         '.section h2',
         '.section h3',
         '.section .lead',
         '.section > .container > p',
+        '.section-heading',
         '.service-track',
         '.challenge-grid li',
         '.contact-layout > *',
         '.hero-layout > *',
+        '.about-layout > *',
+        '.about-highlights > *',
+        '.publication-card',
+        '.policy-card',
         '.cta-row',
         '.card',
         '.hero-note'
@@ -160,10 +210,6 @@
 
   /**
    * Service carousel logic
-   * - Keeps one left and one right preview card visible.
-   * - The center cards are the active cards: 3 desktop, 2 tablet, 1 mobile.
-   * - Does not loop.
-   * - Arrows hide at the start/end.
    */
   function initServiceCarousel(carousel) {
     const viewport = carousel.querySelector('[data-viewport]');
@@ -220,11 +266,6 @@
       clampIndex();
 
       const step = getCardStep();
-
-      /*
-       * Start the viewport one card before the active group when possible,
-       * so the previous card appears as the faded preview.
-       */
       const visibleStartIndex = Math.max(0, index - 1);
       const offset = -(visibleStartIndex * step);
 
