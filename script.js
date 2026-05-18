@@ -145,7 +145,7 @@
           });
         },
         {
-          threshold: 0.14,
+          threshold: 0.02,
           rootMargin: '0px 0px -8% 0px'
         }
     );

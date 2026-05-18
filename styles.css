@@ -1003,9 +1003,13 @@ select:focus-visible {
   }
 
   .reveal {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(1px);
+    transition:
+            opacity 100ms ease,
+            transform 100ms ease,
+            filter 100ms ease;
+    will-change: opacity, transform, filter;
   }
 }
