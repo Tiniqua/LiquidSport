@@ -990,7 +990,7 @@ body.dark-theme .theme-toggle-thumb {
 }
 
 .about-copy {
-  align-self: center;
+  align-self: auto;
 }
 
 .about-highlights {
