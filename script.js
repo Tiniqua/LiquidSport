@@ -129,7 +129,7 @@
   });
 
   /**
-   * Simple contact form feedback
+   * Open the visitor's configured email application with their enquiry pre-filled.
    */
   const form = document.getElementById('contact-form');
   const feedback = document.getElementById('form-feedback');
@@ -142,17 +142,28 @@
       const email = form.querySelector('#email');
       const message = form.querySelector('#message');
 
-      const hasName = name && name.value.trim().length > 0;
-      const hasEmail = email && email.value.trim().length > 0;
-      const hasMessage = message && message.value.trim().length > 0;
-
-      if (!hasName || !hasEmail || !hasMessage) {
-        feedback.textContent = 'Please complete all fields before sending.';
+      if (!name || !email || !message || !form.checkValidity()) {
+        feedback.textContent = 'Please complete all fields with a valid email address.';
+        form.reportValidity();
         return;
       }
 
-      feedback.textContent = "Thank you, we'll be in touch soon.";
-      form.reset();
+      const subject = `Website enquiry from ${name.value.trim()}`;
+      const body = [
+        `Name: ${name.value.trim()}`,
+        `Email: ${email.value.trim()}`,
+        '',
+        message.value.trim()
+      ].join('\r\n');
+
+      const mailtoUrl =
+          'mailto:callum@liquidsportpsychology.co.uk' +
+          `?subject=${encodeURIComponent(subject)}` +
+          `&body=${encodeURIComponent(body)}`;
+
+      feedback.textContent =
+          'Your email application should now open. Please review the message and press Send.';
+      window.location.href = mailtoUrl;
     });
   }
 
