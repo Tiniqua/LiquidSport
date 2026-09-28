@@ -286,7 +286,7 @@
 
     if (!viewport || !track || !cards.length) return;
 
-    let index = 1;
+    let index = 0;
     let activeCount = 3;
 
     const setActiveCount = () => {
@@ -294,7 +294,11 @@
 
       if (width <= 540) activeCount = 1;
       else if (width <= 980) activeCount = 2;
-      else activeCount = 3;
+      else activeCount = cards.length;
+
+      activeCount = Math.min(activeCount, cards.length);
+      carousel.dataset.visibleCount = String(activeCount);
+      carousel.dataset.allVisible = String(activeCount === cards.length);
     };
 
     const getMaxIndex = () => {

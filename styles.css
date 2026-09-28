@@ -1122,6 +1122,15 @@ select:focus-visible {
   );
 }
 
+.carousel[data-all-visible="true"] {
+  grid-template-columns: 1fr;
+}
+
+.carousel[data-all-visible="true"] .carousel-viewport {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
 .carousel-track {
   display: flex;
   gap: 1rem;
@@ -1131,7 +1140,7 @@ select:focus-visible {
 }
 
 .service-card {
-  flex: 0 0 calc((100% - 4rem) / 5);
+  flex: 0 0 100%;
   padding: 1.05rem;
   min-height: 224px;
   transform-origin: center;
@@ -1141,6 +1150,18 @@ select:focus-visible {
           filter 220ms ease,
           box-shadow 220ms ease,
           border-color 220ms ease;
+}
+
+.carousel[data-visible-count="2"] .service-card {
+  flex-basis: calc((100% - 1rem) / 2);
+}
+
+.carousel[data-visible-count="3"] .service-card {
+  flex-basis: calc((100% - 2rem) / 3);
+}
+
+.carousel[data-visible-count="4"] .service-card {
+  flex-basis: calc((100% - 3rem) / 4);
 }
 
 .service-card p,
@@ -1195,6 +1216,10 @@ select:focus-visible {
   background: var(--surface);
   color: var(--accent);
   border: 1px solid var(--line);
+}
+
+.carousel-btn[hidden] {
+  display: none;
 }
 
 .carousel-btn:hover,
