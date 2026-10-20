@@ -26,7 +26,7 @@
 
   --header-scale: 1;
   --header-base-padding: 0.85rem;
-  --header-base-brand-size: 1rem;
+  --header-base-logo-width: 15rem;
   --header-base-nav-size: 0.92rem;
 
   --footer-scale: 0.72;
@@ -460,12 +460,23 @@ body.dark-theme main::after {
 }
 
 .brand {
+  display: inline-flex;
+  flex: 0 0 auto;
+  max-width: calc(100% - 4.4rem);
   text-decoration: none;
-  color: var(--text);
-  font-weight: 850;
-  letter-spacing: -0.045em;
-  font-size: calc(var(--header-base-brand-size) * var(--header-scale));
-  transition: font-size 80ms linear, color 160ms ease;
+}
+
+.brand-logo {
+  display: block;
+  width: calc(var(--header-base-logo-width) * var(--header-scale));
+  max-width: 100%;
+  height: auto;
+  filter: brightness(0);
+  transition: width 80ms linear;
+}
+
+body.dark-theme .brand-logo {
+  filter: none;
 }
 
 nav {
